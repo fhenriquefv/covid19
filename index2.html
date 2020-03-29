@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <head>
+<style>
+* {
+  box-sizing: border-box;
+}
+
+#myInput {
+  background-image: url('https://www.w3schools.com/css/searchicon.png');
+  background-position: 10px 10px;
+  background-repeat: no-repeat;
+  width: 100%;
+  font-size: 16px;
+  padding: 12px 20px 12px 40px;
+  border: 1px solid #ddd;
+  margin-bottom: 12px;
+}
+
+#myTable {
+  border-collapse: collapse;
+  width: 100%;
+  border: 1px solid #ddd;
+  font-size: 18px;
+  table-layout: auto;
+}
+
+#myTable th, #myTable td {
+  text-align: left;
+  padding: 12px;
+}
+
+#myTable tr {
+  border-bottom: 1px solid #ddd;
+}
+
+#myTable tr.header, #myTable tr:hover {
+  background-color: #f1f1f1;
+}
+</style>
+
+    </head>
+    <body onload="getDados()">
+        
+        <div class="w3-container w3-blue">
+            <h2>Casos de COVID-19 por estado do Brasil</h2>
+        </div>
+
+        <h2>Estado (para ordenar por coluna, clique no título correspondente) </h2>
+
+        <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Pesquise por UF..." title="Digite a UF">
+
+        <div id = "estacoes">            
+        </div>
+
+        <div>
+        Desenvolvido por: <br>
+         Prof.Francisco Henrique de Freitas Viana, D.S.c. <br>
+         CEFET/RJ - Unidade de Nova Iguaçu <br>
+         e-mail: professorhenriqueviana@gmail.com
+        </div>
+        <script>
+
+            function myFunction() {
+                var input, filter, table, tr, td, i, txtValue;
+                input = document.getElementById("myInput");
+                filter = input.value.toUpperCase();
+                table = document.getElementById("myTable");
+                tr = table.getElementsByTagName("tr");
+                for (i = 0; i < tr.length; i++) {
+                    td = tr[i].getElementsByTagName("td")[0];
+                    if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                    }       
+                }
+            }
+            function sortByCol(arr, colIndex){
+                arr.sort(sortFunction);
+                function sortFunction(a, b) {
+                    a = a[colIndex];
+                    b = b[colIndex];
+                return isNaN(a-b) ? (a === b) ? 0 : (a < b) ? -1 : 1 : a-b  ;  // test if text string - ie cannot be coerced to numbers.
+                // Note that sorting a column of mixed types will always give an entertaining result as the strict equality test will always return false
+                // see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Equality_comparisons_and_sameness
+
+                }
+            }
+
+            // ref: http://stackoverflow.com/a/1293163/2343
+            // This will parse a delimited string into an array of
+            // arrays. The default delimiter is the comma, but this
+            // can be overriden in the second argument.
+            function CSVToArray( strData, strDelimiter ){
+                // Check to see if the delimiter is defined. If not,
+                // then default to comma.
+                strDelimiter = (strDelimiter || ",");
+
+                // Create a regular expression to parse the CSV values.
+                var objPattern = new RegExp(
+                    (
+                        // Delimiters.
+                        "(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
+
+                        // Quoted fields.
+                        "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+
+                        // Standard fields.
+                        "([^\"\\" + strDelimiter + "\\r\\n]*))"
+                    ),
+                    "gi"
+                    );
+
+
+                // Create an array to hold our data. Give the array
+                // a default empty first row.
+                var arrData = [[]];
+
+                // Create an array to hold our individual pattern
+                // matching groups.
+                var arrMatches = null;
+
+
+                // Keep looping over the regular expression matches
+                // until we can no longer find a match.
+                while (arrMatches = objPattern.exec( strData )){
+
+                    // Get the delimiter that was found.
+                    var strMatchedDelimiter = arrMatches[ 1 ];
+
+                    // Check to see if the given delimiter has a length
+                    // (is not the start of string) and if it matches
+                    // field delimiter. If id does not, then we know
+                    // that this delimiter is a row delimiter.
+                    if (
+                        strMatchedDelimiter.length &&
+                        strMatchedDelimiter !== strDelimiter
+                        ){
+
+                        // Since we have reached a new row of data,
+                        // add an empty row to our data array.
+                        arrData.push( [] );
+
+                    }
+
+                    var strMatchedValue;
+
+                    // Now that we have our delimiter out of the way,
+                    // let's check to see which kind of value we
+                    // captured (quoted or unquoted).
+                    if (arrMatches[ 2 ]){
+
+                        // We found a quoted value. When we capture
+                        // this value, unescape any double quotes.
+                        strMatchedValue = arrMatches[ 2 ].replace(
+                            new RegExp( "\"\"", "g" ),
+                            "\""
+                            );
+
+                    } else {
+
+                        // We found a non-quoted value.
+                        strMatchedValue = arrMatches[ 3 ];
+
+                    }
+
+
+                    // Now that we have our value string, let's add
+                    // it to the data array.
+                    arrData[ arrData.length - 1 ].push( strMatchedValue );
+                }
+
+                // Return the parsed data.
+                return( arrData );
+            }
+
+            
+            var json;
+            var col = 4, col1 = 1, col2 = 1, col3 = 1, col4 = 1, col5 = 1, col6 = 1;
+            var crescente = 1;
+            function ordenar(coluna, sentido)
+            {
+                col = coluna;
+                switch(col)
+                {
+                    case 1 : crescente = col1;
+                             //col1 = 1 -col1;
+                             break;
+                    case 2 : crescente = col2;
+                             col2 = 1 - col2;
+                             console.log("col2 depois=" +col2);
+                             break;
+                    case 3 : crescente = col3;
+                             col3 = 1-col3;
+                             break;
+                    case 4 : crescente = col4;
+                             console.log("col4 antes=" +col4);
+                             col4 =1-col4;
+                             console.log("col4 depois=" +col4);
+                             break;
+                    case 5 : crescente = col5;
+                             col5 = 1-col5;
+                             break;                                    
+                }
+                
+                showData();
+            }
+            function showData()
+            {
+                
+                if(col > 1)
+                {
+                    json = json.sort(function(a,b) {
+                        if(crescente != 1)
+                            return a[col] - b[col];
+                        else
+                            return b[col] - a[col];
+                    });
+                }else{
+                    json = json.map(function (i){return i;}).sort();
+                    /*if(crescente == 1)
+                        json = json.sort(dynamicSort(1));
+                    else          
+                        json = json.sort(dynamicSort(0));*/
+                }
+                
+                console.log(json);
+                var table = "<table id=\"myTable\" class=\"w3-table-all\" ><tr class=\"w3-red\" ><th><a onclick =\"ordenar(1,1)\">Estado</th><th><a onclick =\"ordenar(2,1)\">Total de casos</th> <th><a onclick =\"ordenar(3,1)\">Confirmados pelo MS</th> <th><a onclick =\"ordenar(5,1)\">Mortos</th> </tr>";
+                var total = 0;
+                for (x in json)
+                {
+                    if( x == 0 )
+                        continue;
+                    if( json[x][1] == undefined || json[x][1] == "state" )
+                        continue;
+                    if( json[x][1] == "TOTAL"  )
+                    {
+                        total = x;
+                        continue;
+                    }   
+                    console.log(x);
+                    table += "<tr><td>"+json[x][1]+"</td><td>"+json[x][2]+"</td><td>"+json[x][3]+"</td><td>"+json[x][5]+"</td></tr>";
+                }
+                
+                table += "</table>";
+                table += "<table class=\"w3-table-all\" ><tr class=\"w3-red\" ><th>BRASIL</th><th>Total de casos</th> <th>Confirmados pelo MS</th> <th>Mortos</th></tr>";
+                table += "<tr><td>"+json[total][1]+"</td><td>"+json[total][2]+"</td><td>"+json[total][3]+"</td><td>"+json[total][5]+"</td></tr>";
+                table += "</table>";
+
+                console.log(table);
+                document.getElementById("estacoes").innerHTML = table;
+            }
+            function getDados()
+            {
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() 
+                    {
+                        if(this.readyState == 4 && this.status == 200)
+                        {                
+                            //sucesso
+                            json = CSVToArray(this.responseText, ",");
+                            json = json.map(function (i){return i;}).sort();
+                            ordenar(2,1);
+                                
+                        }
+                    }
+                    xhttp.open("GET", "https://raw.githubusercontent.com/wcota/covid19br/master/cases-brazil-total.csv", false);
+                    xhttp.send();            
+                    setTimeout(getDados, 500000);
+          }
+        </script>    
+    </body>
+</html>
