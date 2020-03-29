@@ -10,7 +10,7 @@ and open the template in the editor.
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-        <head>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <style>
 * {
   box-sizing: border-box;
@@ -20,7 +20,7 @@ and open the template in the editor.
   background-image: url('https://www.w3schools.com/css/searchicon.png');
   background-position: 10px 10px;
   background-repeat: no-repeat;
-  width: 100%;
+  width: 70%;
   font-size: 16px;
   padding: 12px 20px 12px 40px;
   border: 1px solid #ddd;
@@ -33,6 +33,7 @@ and open the template in the editor.
   border: 1px solid #ddd;
   font-size: 18px;
   table-layout: auto;
+  
 }
 
 #myTable th, #myTable td {
@@ -45,8 +46,9 @@ and open the template in the editor.
 }
 
 #myTable tr.header, #myTable tr:hover {
-  background-color: #f1f1f1;
+  background-color: #c8e8f7; //#f1f1f1;
 }
+.material-icons {vertical-align:-14%}
 </style>
 
     </head>
@@ -56,20 +58,30 @@ and open the template in the editor.
             <h2>Casos de COVID-19 por estado do Brasil</h2>
         </div>
 
-        <h2>Estado (para ordenar por coluna, clique no título correspondente) </h2>
-
+        <h2 id ="titulo">Estado (para ordenar por coluna, clique no título correspondente) </h2>
+        <br> 
+        <div id="voltar"> 
+              
+        </div> 
         <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Pesquise por UF..." title="Digite a UF">
-
+        <i class="material-icons" onclick="limpar()">close</i>
+        
         <div id = "estacoes">            
         </div>
 
         <div>
         Desenvolvido por: <br>
-         Prof.Francisco Henrique de Freitas Viana, D.S.c. <br>
+         Prof. Francisco Henrique de Freitas Viana, D.S.c. <br>
          CEFET/RJ - Unidade de Nova Iguaçu <br>
          e-mail: professorhenriqueviana@gmail.com
+
         </div>
         <script>
+            function limpar()
+            {
+                document.getElementById("myInput").value = "";
+                showData();
+            }
 
             function myFunction() {
                 var input, filter, table, tr, td, i, txtValue;
@@ -189,7 +201,7 @@ and open the template in the editor.
             }
 
             
-            var json;
+            var json, jsonDiario;
             var col = 4, col1 = 1, col2 = 1, col3 = 1, col4 = 1, col5 = 1, col6 = 1;
             var crescente = 1;
             function ordenar(coluna, sentido)
@@ -218,6 +230,38 @@ and open the template in the editor.
                 }
                 
                 showData();
+            }
+
+            function verEstado(uf)
+            {
+                console.log("Estado: "+uf);
+                document.getElementById("voltar").innerHTML = "Para voltar à pagina principal, clique: <i class=\"material-icons\"  onclick =\"location.reload(true)\">reply</i>";
+
+                var table = "<table id=\"myTable\" class=\"w3-table-all\" ><tr class=\"w3-red\" ><th>Estado</th><th>DATA</th> <th>NOVOS CASOS/TOTAL</th> <th>NOVAS MORTES/TOTAL</th> </tr>";
+                var total = 0;
+                var mortes = 0;
+                for (x in jsonDiario)
+                {
+                    if( x == 0 )
+                        continue;
+                    if( jsonDiario[x][2] == undefined || jsonDiario[x][2] != uf )
+                        continue;
+                    if( jsonDiario[x][1] == "TOTAL"  )
+                    {
+                        total = x;
+                        continue;
+                    }   
+                    console.log(x);
+                    mortes = Number(jsonDiario[x][4]) - mortes;
+                    table += "<tr><td>"+jsonDiario[x][2]+"</td><td>"+jsonDiario[x][0]+"</td><td>"+jsonDiario[x][5]+" / "+jsonDiario[x][6]+"</td><td>"+mortes+" / "+jsonDiario[x][4]+"</td></tr>";
+                }
+                
+                table += "</table>";
+
+                console.log(table);
+                document.getElementById("estacoes").innerHTML = table;
+                document.getElementById("myInput").placeholder = "Pesquise por município do estado: "+ uf;
+                document.getElementById("titulo").innerHTML = "Estado: "+ uf;
             }
             function showData()
             {
@@ -253,7 +297,7 @@ and open the template in the editor.
                         continue;
                     }   
                     console.log(x);
-                    table += "<tr><td>"+json[x][1]+"</td><td>"+json[x][2]+"</td><td>"+json[x][3]+"</td><td>"+json[x][5]+"</td></tr>";
+                    table += "<tr><td><a onclick = \"verEstado(\'"+json[x][1]+"\')\">"+json[x][1]+"  <i class=\"material-icons\">more</i></a></td><td>"+json[x][2]+"</td><td>"+json[x][3]+"</td><td>"+json[x][5]+"</td></tr>";
                 }
                 
                 table += "</table>";
@@ -263,6 +307,25 @@ and open the template in the editor.
 
                 console.log(table);
                 document.getElementById("estacoes").innerHTML = table;
+            }
+            function getDadosDiarios()
+            {
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() 
+                    {
+                        if(this.readyState == 4 && this.status == 200)
+                        {                
+                            //sucesso
+                            jsonDiario = CSVToArray(this.responseText, ",");
+                            jsonDiario = jsonDiario.map(function (i){return i;}).sort();
+                            console.log(jsonDiario);
+                            //ordenar(2,1);
+                                
+                        }
+                    }
+                    xhttp.open("GET", "https://raw.githubusercontent.com/wcota/covid19br/master/cases-brazil-states.csv", false);
+                    xhttp.send();            
+                    setTimeout(getDadosDiarios, 500000);
             }
             function getDados()
             {
@@ -275,13 +338,14 @@ and open the template in the editor.
                             json = CSVToArray(this.responseText, ",");
                             json = json.map(function (i){return i;}).sort();
                             ordenar(2,1);
-                                
+                            getDadosDiarios();    
                         }
                     }
                     xhttp.open("GET", "https://raw.githubusercontent.com/wcota/covid19br/master/cases-brazil-total.csv", false);
                     xhttp.send();            
                     setTimeout(getDados, 500000);
-          }
+            }
+
         </script>    
     </body>
 </html>
