@@ -2,11 +2,13 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>  
   
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <style>
 #conteudo { width: 400px; height: 300px;} 
 body {
@@ -79,13 +81,14 @@ body {
 </div>
 
 
-<iframe name="content"></iframe>
+<iframe class="embed-responsive-item" name="content"></iframe>
 
 <script>
 
 function carregar(pagina)
 {
-    //$("#conteudo").load(pagina);
+    //$("#conteudo").load(pagina);   
+
     parent.window.frames['content'].location = 'index2.html'
     
 }
