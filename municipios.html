@@ -55,26 +55,26 @@ and open the template in the editor.
     <body onload="getDados()">
         
         <div class="w3-container w3-blue">
-            <h2>Casos de COVID-19 por estado do Brasil</h2>
+            <h2>Casos de COVID-19 por município brasileiro</h2>
         </div>
 
-        <h2 id ="titulo">Estado (para ordenar por coluna, clique no título correspondente) </h2>
+        <h2 id ="titulo">Municípios (para ordenar por coluna, clique no título correspondente) </h2>
         <br> 
         <div id="voltar"> 
               
         </div> 
-        <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Pesquise por UF..." title="Digite a UF">
+        <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Pesquise por Município..." title="Digite o nome do município">
         <i class="material-icons" onclick="limpar()">close</i>
         
         <div id = "estacoes">            
         </div>
-
         <div>
         Desenvolvido por: <br>
          OPTNET Serviços de Informática LTDA <br>
          e-mail: juliana.optnet@gmail.com
 
         </div>
+        
         <script>
             function limpar()
             {
@@ -236,23 +236,35 @@ and open the template in the editor.
                 console.log("Estado: "+uf);
                 document.getElementById("voltar").innerHTML = "Para voltar à pagina principal, clique: <i class=\"material-icons\"  onclick =\"location.reload(true)\">reply</i>";
 
-                var table = "<table id=\"myTable\" class=\"w3-table-all\" ><tr class=\"w3-red\" ><th>Estado</th><th>DATA</th> <th>NOVOS CASOS/TOTAL</th> <th>NOVAS MORTES/TOTAL</th> </tr>";
+                var table = "<table id=\"myTable\" class=\"w3-table-all\" ><tr class=\"w3-red\" ><th>DATA</th><th>MUNICÍPIO</th> <th>NOVOS CASOS / (Percentual)</th> <th>TOTAL DE CASOS</th> </tr>";
                 var total = 0;
-                var mortes = 0;
+                var percentual_novos_casos = 0.00;
+                var total_dia_anterior = 0;
                 for (x in jsonDiario)
                 {
                     if( x == 0 )
                         continue;
-                    if( jsonDiario[x][2] == undefined || jsonDiario[x][2] != uf )
+                    if( jsonDiario[x][3] == undefined || jsonDiario[x][3] != uf )
                         continue;
-                    if( jsonDiario[x][1] == "TOTAL"  )
+                    if( jsonDiario[x][2] == "TOTAL"  )
                     {
                         total = x;
                         continue;
                     }   
                     console.log(x);
-                    mortes = Number(jsonDiario[x][4]) - mortes;
-                    table += "<tr><td>"+jsonDiario[x][2]+"</td><td>"+jsonDiario[x][0]+"</td><td>"+jsonDiario[x][5]+" / "+jsonDiario[x][6]+"</td><td>"+mortes+" / "+jsonDiario[x][4]+"</td></tr>";
+                    //mortes = Number(jsonDiario[x][4]) - mortes;
+                    if(total_dia_anterior != 0)
+                    {
+                        percentual_novos_casos = (jsonDiario[x][5]/total_dia_anterior) * 100;
+                        percentual_novos_casos = percentual_novos_casos.toFixed(2);
+                        
+                    }
+                    if(total_dia_anterior == 0)
+                        table += "<tr><td>"+jsonDiario[x][0]+"</td><td>"+jsonDiario[x][3]+"</td><td>"+jsonDiario[x][5]+" / - </td><td>"+jsonDiario[x][6]+"</td></tr>";
+                    else
+                        table += "<tr><td>"+jsonDiario[x][0]+"</td><td>"+jsonDiario[x][3]+"</td><td>"+jsonDiario[x][5]+" / "+percentual_novos_casos+"%</td><td>"+jsonDiario[x][6]+"</td></tr>";
+                     
+                    total_dia_anterior = jsonDiario[x][6];             
                 }
                 
                 table += "</table>";
@@ -282,7 +294,7 @@ and open the template in the editor.
                 }
                 
                 console.log(json);
-                var table = "<table id=\"myTable\" class=\"w3-table-all\" ><tr class=\"w3-red\" ><th><a onclick =\"ordenar(1,1)\">Estado</th><th><a onclick =\"ordenar(2,1)\">Total de casos</th> <th><a onclick =\"ordenar(3,1)\">Confirmados pelo MS</th> <th><a onclick =\"ordenar(5,1)\">Mortos</th> </tr>";
+                var table = "<table id=\"myTable\" class=\"w3-table-all\" ><tr class=\"w3-red\" ><th><a onclick =\"ordenar(2,1)\">MUNICÍPIOS</th><th><a onclick =\"ordenar(4,1)\">MORTOS</th> <th><a onclick =\"ordenar(5,1)\">TOTAL DE CASOS</th> <th><a onclick =\"ordenar(5,1)\">Mortos</th> </tr>";
                 var total = 0;
                 for (x in json)
                 {
@@ -296,14 +308,14 @@ and open the template in the editor.
                         continue;
                     }   
                     console.log(x);
-                    table += "<tr><td><a onclick = \"verEstado(\'"+json[x][1]+"\')\">"+json[x][1]+"  <i class=\"material-icons\">more</i></a></td><td>"+json[x][2]+"</td><td>"+json[x][3]+"</td><td>"+json[x][5]+"</td></tr>";
+                    table += "<tr><td><a onclick = \"verEstado(\'"+json[x][2]+"\')\">"+json[x][2]+"  <i class=\"material-icons\">more</i></a></td><td>"+json[x][4]+"</td><td>"+json[x][5]+"</td><td>"+json[x][5]+"</td></tr>";
                 }
                 
                 table += "</table>";
-                table += "<table class=\"w3-table-all\" ><tr class=\"w3-red\" ><th>BRASIL</th><th>Total de casos</th> <th>Confirmados pelo MS</th> <th>Mortos</th></tr>";
-                table += "<tr><td>"+json[total][1]+"</td><td>"+json[total][2]+"</td><td>"+json[total][3]+"</td><td>"+json[total][5]+"</td></tr>";
+                /*table += "<table class=\"w3-table-all\" ><tr class=\"w3-red\" ><th>BRASIL</th><th>Total de casos</th> <th>Confirmados pelo MS</th> <th>Mortos</th></tr>";
+                table += "<tr><td>"+json[total][1]+"</td><td>"+json[total][2]+"</td><td>"+json[total][4]+"</td><td>"+json[total][5]+"</td></tr>";
                 table += "</table>";
-
+*/
                 console.log(table);
                 document.getElementById("estacoes").innerHTML = table;
             }
@@ -319,10 +331,30 @@ and open the template in the editor.
                             jsonDiario = jsonDiario.map(function (i){return i;}).sort();
                             console.log(jsonDiario);
                             //ordenar(2,1);
-                                
+                            var data = new Date();
+                            var day     = data.getDate();           // 1-31
+                            var month   = data.getMonth();
+                            var year    = data.getFullYear();
+                            var dia = day;
+                            var mes = month;
+                            
+                            console.log(mes);
+                            mes = Number(mes +1);
+                            console.log(mes);
+                            if(dia < 10)
+                            {
+                                dia = "0"+day;
+                            }
+                            if(mes < 10)
+                            {
+                                mes = "0" + mes;
+                                console.log(mes);
+                            }
+                            var str_data = year + '-' + mes + '-' + dia;
+                            console.log(str_data); 
                         }
                     }
-                    xhttp.open("GET", "https://raw.githubusercontent.com/wcota/covid19br/master/cases-brazil-states.csv", false);
+                    xhttp.open("GET", "https://raw.githubusercontent.com/wcota/covid19br/master/cases-brazil-cities-time.csv", false);
                     xhttp.send();            
                     setTimeout(getDadosDiarios, 500000);
             }
@@ -340,7 +372,7 @@ and open the template in the editor.
                             getDadosDiarios();    
                         }
                     }
-                    xhttp.open("GET", "https://raw.githubusercontent.com/wcota/covid19br/master/cases-brazil-total.csv", false);
+                    xhttp.open("GET", "https://raw.githubusercontent.com/wcota/covid19br/master/cases-brazil-cities.csv", false);
                     xhttp.send();            
                     setTimeout(getDados, 500000);
             }
