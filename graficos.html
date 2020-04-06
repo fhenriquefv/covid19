@@ -1,0 +1,46 @@
+<html>
+<head>
+
+</head>
+<body>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <div id="chart_div"></div>
+<script>
+
+google.charts.load('current', {packages: ['corechart', 'bar']});
+google.charts.setOnLoadCallback(drawStacked);
+
+function drawStacked() {
+      var data = new google.visualization.DataTable();
+      data.addColumn('date', 'Data');
+      data.addColumn('number', 'Casos anteriores');
+      data.addColumn('number', 'Novos casos');
+
+      data.addRows([
+        [{v: [new Date(2020, 2, 15)]}, 1, .25],
+        [{v: [new Date(2020, 2, 16)]}, 2, .5],
+        [{v: [new Date(2020, 2, 17)]}, 3, 1],
+    ]);
+
+      var options = {
+        title: 'Evolução do número de casos de COVID-19 no tempo',
+        isStacked: true,
+        hAxis: {
+          title: 'Data',
+          format: 'yyyy,mm,dd',
+          viewWindow: {
+            min: [7, 30, 0],
+            max: [17, 30, 0]
+          }
+        },
+        vAxis: {
+          title: 'Rating (scale of 1-10)'
+        }
+      };
+
+      var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+      chart.draw(data, options);
+    }
+    </script>  
+</body>
+</html>

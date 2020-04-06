@@ -1,0 +1,78 @@
+<html>
+<head>
+<meta charset="UTF-8"/>
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+</head>
+<body>
+<div class="w3-container w3-blue">
+  <h2>Cadastro do cachorro</h2>
+</div>
+	<form class="w3-container">
+	<label> Nome do cachorro : </label>
+	<input  class="w3-input" type="text" id="nome"/>  
+	<label> Raça do cachorro: </label>
+	<input  class="w3-input" type="text" id="raca"/> <br> <br>
+	<label>Idade do cachorro:</label>
+	<input class="w3-input" type="text" id="idade"/> <br> <br>
+	<label> Sexo do cachorro:</label> <br>
+	<input class="w3-radio" type="radio" id= "macho" name="sexo" value= "M" /> <label>Macho </label> </input> 
+	<input class="w3-radio" type="radio" id= "femea" name="sexo" value= "F" /> <label>Fêmea</label> <br> <br>
+	
+	<input class="w3-btn w3-blue" type="button" id= "btSalvar" value="Salvar" onclick="salvar()"/>
+
+	</form>
+	
+	<h2 id="titulo"> </h2>
+	<div class="w3-container" id = "cadastrados"> </div>
+	
+	<script>
+	document.getElementById("macho").checked = true;
+	//define um vetor de cachorros
+	var vetorCachorros = [];
+	function salvar()
+	{
+		var cachorro = []; //{nome: "", raca: "", idade: "", sexo: ""} ; 
+		cachorro.nome = document.getElementById("nome").value;
+		cachorro.raca = document.getElementById("raca").value;
+		cachorro.idade = document.getElementById("idade").value;
+		var macho = document.getElementById("macho").checked;
+		
+		if(macho == true)
+		{
+			cachorro.sexo = "macho";
+		}
+		else
+		{
+			cachorro.sexo = "femea";
+
+		}
+		
+		//adicionar o cachorro ao vetor de cachorros
+		vetorCachorros.push(cachorro);
+		
+		//criando tabela
+		var divCad = document.getElementById("cadastrados");
+		var code= "<table class=\"w3-table-all\" >";
+		
+		code += "<tr class=\"w3-red\" ><th> Adotar </th><th> Nome </th> <th> Raça</th> <th> Idade </th> <th> Sexo </th> </tr>";
+		var i;
+		for(i = 0; i < vetorCachorros.length; i++)
+		{
+			code += "<tr><td><input type=\"checkbox\" id=\"adote\""+i+" > Adotar </td><td>" +vetorCachorros[i].nome +"</td> <td>"+ vetorCachorros[i].raca +"</td> <td>"+ vetorCachorros[i].idade+"</td> <td>"+vetorCachorros[i].sexo+"</td> </tr>";
+		}
+		code += "</table>"
+		console.log(code);
+		divCad.innerHTML = code;
+		
+		//adicionar o titulo da tabela
+		var titulo = document.getElementById("titulo");
+		titulo.innerHTML = "Lista de cachorros para adoção: "+i;
+	}
+	
+	</script>
+	
+	
+</body>
+
+</html>
