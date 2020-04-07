@@ -75,9 +75,45 @@ input[type=submit]:hover {
 <script>
 var vetorCandidatos = [];
 
+function sendPostData(inputJson, url)
+{
+    // Sending and receiving data in JSON format using POST method
+    //
+    var xhr = new XMLHttpRequest();
+    //var url = "url";
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+          var outputJson = JSON.parse(xhr.responseText);
+          console.log("saida: "+outputJson);
+          //console.log(json.email + ", " + json.password);
+      }
+    };
+    //var data = JSON.stringify({"email": "hey@mail.com", "password": "101010"});
+    xhr.send(inputJson);
+}
+
+function runBRKGA()
+{
+  var inputJson = {};
+  inputJson.n = 20;
+  inputJson.m = 8;
+  inputJson.p = 20;
+  inputJson.elite = 4;
+  inputJson.mutant = 2;
+  inputJson.k = 10;
+  inputJson.type = false;
+  inputJson.locals = vetorCandidatos;
+  
+  console.log(JSON.stringify(inputJson));
+  var URL = "https://covid-19sad.herokuapp.com/brkga";
+  sendPostData(inputJson, URL); 
+}
+
 function preencherTabela()
 {
-    var candidato = [];  
+    var candidato = new Object();  
     candidato.nome         = document.getElementById("name").value;
     candidato.custo        = document.getElementById("custo").value;
     candidato.municipio    = document.getElementById("municipio").value;
@@ -148,7 +184,7 @@ hospitais, minimizando o custo total de instalação dos mesmos e maximizando a 
      <br>
     <div class="w3-bar">
         <button class="w3-button w3-left w3-blue" id= "btConfigurar" value="Configurar Parâmetros" onclick="configurar()"> Configurar Parâmetros</button>
-        <button class="w3-button w3-right w3-blue" id= "btExecutar" value="Executar Algoritmo" onclick="executarAlgoritmo()">Executar Algoritmo &raquo;</button>
+        <button class="w3-button w3-right w3-blue" id= "btExecutar" value="Executar Algoritmo" onclick="runBRKGA()">Executar Algoritmo &raquo;</button>
     </div>
 
 </body>
