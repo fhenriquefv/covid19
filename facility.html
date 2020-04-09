@@ -166,7 +166,7 @@ function sendPostData(inputJson, url)
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4 && xhr.status === 200) {
           var outputJson = JSON.parse(xhr.responseText);
-          console.log("saida: "+outputJson);
+          console.log("saida: "+JSON.stringify(outputJson));
           //console.log(json.email + ", " + json.password);
       }else
       {
@@ -176,7 +176,7 @@ function sendPostData(inputJson, url)
     };
     //var data = JSON.stringify({"email": "hey@mail.com", "password": "101010"});
     console.log("send post");
-    xhr.send(inputJson);
+    xhr.send(JSON.stringify(inputJson));
 }
 
 function runBRKGA()
