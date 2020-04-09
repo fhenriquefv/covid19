@@ -168,9 +168,14 @@ function sendPostData(inputJson, url)
           var outputJson = JSON.parse(xhr.responseText);
           console.log("saida: "+outputJson);
           //console.log(json.email + ", " + json.password);
+      }else
+      {
+        console.log("readyState"+xhr.readyState);
+        console.log("status"+xhr.status)
       }
     };
     //var data = JSON.stringify({"email": "hey@mail.com", "password": "101010"});
+    console.log("send post");
     xhr.send(inputJson);
 }
 
@@ -188,7 +193,7 @@ function runBRKGA()
   inputJson.locals = vetorCandidatos;
   
   console.log(JSON.stringify(inputJson));
-  var URL = "https://covid-19sad.herokuapp.com/brkga";
+  var URL = "https://sad-covid-19.herokuapp.com/brkga";
   sendPostData(inputJson, URL); 
 }
 
