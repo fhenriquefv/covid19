@@ -194,6 +194,9 @@ function runBRKGA()
   
   console.log(JSON.stringify(inputJson));
   var URL = "https://sad-covid-19.herokuapp.com/brkga";
+  inputJson = JSON.parse(
+    "{\"N\":{\"Value\": 4},\"M\":{\"Value\": 10}, 	\"P\":{\"Value\": 8}, \"Elite\":{\"Value\": 2}, \"Mutant\":{\"Value\": 2}, \"K\":{\"Value\": 20}, \"S\":{\"Value\": \"Scenario1\"},	\"Type\":{\"Value\": \"False\"}}");
+
   sendPostData(inputJson, URL); 
 }
 
